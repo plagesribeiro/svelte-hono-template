@@ -1,0 +1,18 @@
+{
+  "name": "shared",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    "./api-routes-schemas": "./src/api-routes-schemas/index.ts",
+    "./constants": "./src/constants/index.ts"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

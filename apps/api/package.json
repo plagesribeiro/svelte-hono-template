@@ -2,15 +2,26 @@
   "name": "api",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "pnpm run cf-typegen && wrangler dev",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
+  "exports": {
+    ".": "./src/types.ts"
+  },
   "dependencies": {
-    "hono": "^4.10.4"
+    "@clerk/backend": "^2.19.1",
+    "@hono/clerk-auth": "^3.0.3",
+    "@hono/swagger-ui": "^0.5.2",
+    "@hono/zod-openapi": "^1.1.4",
+    "drizzle-orm": "catalog:",
+    "hono": "^4.10.4",
+    "shared": "workspace:*",
+    "db": "workspace:*",
+    "zod": "catalog:",
+    "svix": "^1.81.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "catalog:",
     "wrangler": "^4.4.0"
   }
 }

@@ -1,3 +1,4 @@
+import { isolateLocals } from "$lib/utils/locals";
 import type { Handle } from "@sveltejs/kit";
 import { sequence } from '@sveltejs/kit/hooks'
 import { withClerkHandler } from 'svelte-clerk/server';
@@ -24,4 +25,7 @@ export const handle = sequence(withClerkHandler(),(async ({ event, resolve }) =>
 	}
 
 	return await resolve(event);
+}) satisfies Handle, 
+(async ({ event, resolve }) => {
+    return await isolateLocals(event.locals, async () => await resolve(event))
 }) satisfies Handle);

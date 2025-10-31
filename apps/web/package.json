@@ -12,7 +12,6 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
-    "@biomejs/biome": "catalog:",
     "@sveltejs/adapter-auto": "^7.0.0",
     "@sveltejs/kit": "^2.47.1",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
@@ -26,6 +25,8 @@
     "@tailwindcss/vite": "^4.1.16",
     "daisyui": "^5.3.10",
     "svelte-clerk": "^0.17.7",
-    "tailwindcss": "^4.1.16"
+    "tailwindcss": "^4.1.16",
+    "api": "workspace:*",
+    "shared": "workspace:*"
   }
 }
