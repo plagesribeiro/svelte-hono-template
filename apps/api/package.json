@@ -10,6 +10,7 @@
     "hono": "^4.10.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "catalog:",
     "wrangler": "^4.4.0"
   }
 }

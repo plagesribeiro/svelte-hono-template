@@ -1,6 +1,10 @@
 {
-  "name": "my-turborepo",
+  "name": "svelte-hono-template",
   "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -9,11 +13,12 @@
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "@biomejs/biome": "catalog:",
     "prettier": "^3.6.2",
     "turbo": "^2.5.8",
     "typescript": "5.9.2"
   },
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@10.17.1",
   "engines": {
     "node": ">=18"
   }
