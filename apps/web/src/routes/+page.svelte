@@ -1,6 +1,31 @@
+<script lang="ts">
+  import { client, json } from "$lib/api.svelte";
+
+  let { data } = $props();
+
+  let getWhoamiData = $state<string>("");
+  const getWhoami = async () => {
+    const whoami = await json(client.whoami.$get());
+    getWhoamiData = whoami.userRef;
+  };
+</script>
+
+<div class="flex w-full items-center p-6">
+  <div class="w-full flex flex-col space-y-4">
+    <h1 class="text-4xl font-bold">Demo Page</h1>
+    <p>You are logged in as: {data.whoami.userRef}</p>
+  </div>
+</div>
+
 <a href="/secret?code=gotcha&password=1234" class="btn btn-warning">
   Take me to the protected page
 </a>
+
+<button class="btn btn-primary" onclick={getWhoami}> Get Whoami </button>
+{#if getWhoamiData}
+  API Response: {getWhoamiData}
+{/if}
+
 <div class="flex w-full items-center p-6">
   <div class="w-full flex flex-col space-y-4">
     <h1 class="text-4xl font-bold">Demo Page</h1>

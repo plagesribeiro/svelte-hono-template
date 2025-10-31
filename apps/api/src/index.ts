@@ -20,6 +20,14 @@ const publicRoutes = app
     .get('/robots.txt', (c) => c.text('User-agent: *\nDisallow:', 404))
     .get('/apple-touch-icon.png', (c) => c.body(null, 204))
     .get('/apple-touch-icon-precomposed.png', (c) => c.body(null, 204))
+    .get('/whoami', async (c) => {
+      const auth = c.var.clerkAuth()
+      const userId = auth?.userId
+
+      return c.json({ 
+        userRef: userId ? userId : "Unknown Unauthenticated User",
+       })
+    })
 
 
 const webhookRoutes = publicRoutes.route('/clerkWebhook', clerkWebhookRouter)

@@ -3,7 +3,11 @@ import type { Handle } from "@sveltejs/kit";
 import { sequence } from '@sveltejs/kit/hooks'
 import { withClerkHandler } from 'svelte-clerk/server';
 
-export const handle = sequence(withClerkHandler(),(async ({ event, resolve }) => {
+export const handle = sequence(withClerkHandler(),
+(async ({ event, resolve }) => {
+    return await isolateLocals(event.locals, async () => await resolve(event))
+}) satisfies Handle,
+(async ({ event, resolve }) => {
 	let theme: string | null = null;
 
 	const newTheme = event.url.searchParams.get("theme");
@@ -25,7 +29,4 @@ export const handle = sequence(withClerkHandler(),(async ({ event, resolve }) =>
 	}
 
 	return await resolve(event);
-}) satisfies Handle, 
-(async ({ event, resolve }) => {
-    return await isolateLocals(event.locals, async () => await resolve(event))
 }) satisfies Handle);
