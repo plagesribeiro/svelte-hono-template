@@ -15,7 +15,11 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "precommit": "pnpm lint && pnpm typecheck",
-    "prepare": "husky"
+    "prepare": "husky",
+    "secrets:api": "infisical export --env=dev --path=/api --format=dotenv > apps/api/.dev.vars",
+    "secrets:web": "infisical export --env=dev --path=/web --format=dotenv > apps/web/.env.local",
+    "secrets": "pnpm secrets:api && pnpm secrets:web",
+    "secrets:examples": "node scripts/generate-examples.js"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.4",
