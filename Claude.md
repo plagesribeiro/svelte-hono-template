@@ -221,7 +221,22 @@ pnpm infisical:login    # Authenticate with Infisical
 pnpm infisical:init     # Link to project
 ```
 
-3. **Run with Secrets Injected**:
+3. **Generate Local Environment Files** (Recommended):
+```bash
+# Generate .dev.vars and .env.local from Infisical
+pnpm generate:secrets
+```
+
+This exports secrets from Infisical to local files:
+- API secrets from `/api` path → `apps/api/.dev.vars`
+- Web secrets from `/web` path → `apps/web/.env.local`
+
+Then run normally:
+```bash
+pnpm dev
+```
+
+4. **Alternative: Run with Secrets Injected**:
 ```bash
 # Run development server with secrets from Infisical
 pnpm dev:secrets
@@ -230,13 +245,20 @@ pnpm dev:secrets
 pnpm infisical:run pnpm --filter=api dev
 ```
 
+#### Secret Organization
+
+Secrets are organized by application in Infisical:
+- **`/api` path**: Backend API secrets (DATABASE_URL, CLERK_SECRET_KEY, etc.)
+- **`/web` path**: Frontend Web secrets (PUBLIC_CLERK_PUBLISHABLE_KEY, etc.)
+
 #### Benefits of Using Infisical
 
-- **No `.dev.vars` files needed** - Secrets loaded dynamically
+- **Centralized management** - All secrets in one secure location
 - **Environment separation** - Different secrets for dev/staging/prod
 - **Team collaboration** - Share secrets securely without copy-paste
 - **Audit trail** - Track who accessed secrets
 - **Easy rotation** - Update secrets in one place
+- **Easy setup** - One command generates all needed files
 
 #### Fallback: Traditional .dev.vars (if not using Infisical)
 
@@ -784,20 +806,21 @@ pnpm --filter=db db:generate    # Generate migrations
 pnpm --filter=db db:migrate     # Run migrations
 pnpm --filter=db db:studio      # Open Drizzle Studio
 
-# Deploy API
-pnpm --filter=api deploy        # Deploy to Cloudflare
-
 # Run Wrangler commands
 pnpm --filter=api cf-typegen    # Generate TypeScript types for bindings
 
 # Infisical (Secret Management)
+pnpm generate:secrets           # Generate .dev.vars and .env.local from Infisical (RECOMMENDED)
 pnpm infisical:login            # Login to Infisical
 pnpm infisical:init             # Initialize/link Infisical project
-pnpm infisical:secrets          # View secrets for current environment
-pnpm dev:secrets                # Run dev with secrets from Infisical
+pnpm infisical:secrets          # View API secrets (/api path)
+pnpm infisical:secrets:web      # View Web secrets (/web path)
+pnpm dev:secrets                # Run dev with secrets from Infisical (alternative to generate:secrets)
 pnpm test:secrets               # Run tests with secrets from Infisical
 pnpm infisical:run -- <command> # Run any command with Infisical secrets injected
 ```
+
+**Note:** Deployment to Cloudflare Workers is handled automatically within Cloudflare's deployment pipeline (not via `pnpm deploy`).
 
 ## Troubleshooting
 

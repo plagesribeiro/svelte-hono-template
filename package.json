@@ -8,20 +8,22 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "dev:secrets": "infisical run --env=development -- turbo run dev",
+    "dev:secrets": "infisical run --env=development --path=/api -- turbo run dev --filter=api & infisical run --env=development --path=/web -- turbo run dev --filter=web",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
     "format": "biome format .",
     "format:fix": "biome format . --write",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "test:secrets": "infisical run --env=production -- turbo run test",
+    "test:secrets": "infisical run --env=production --path=/api -- turbo run test",
     "precommit": "pnpm lint && pnpm typecheck",
     "prepare": "husky",
+    "generate:secrets": "bash scripts/generate-secrets.sh || powershell -ExecutionPolicy Bypass -File scripts/generate-secrets.ps1",
     "infisical:login": "infisical login",
     "infisical:init": "infisical init",
-    "infisical:secrets": "infisical secrets",
-    "infisical:run": "infisical run --env=development --"
+    "infisical:secrets": "infisical secrets --path=/api",
+    "infisical:secrets:web": "infisical secrets --path=/web",
+    "infisical:run": "infisical run --env=development --path=/api --"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.4",

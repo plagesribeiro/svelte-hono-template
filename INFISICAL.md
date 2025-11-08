@@ -63,25 +63,44 @@ infisical init
 
 Select your project from the list.
 
-### 5. Run Commands with Secrets
+### 5. Generate Local Environment Files (Recommended)
 
-Instead of using `.dev.vars` files, run commands through Infisical:
+The easiest way to work locally is to generate environment files from Infisical:
+
+```bash
+# Generate .dev.vars and .env.local from Infisical
+pnpm generate:secrets
+```
+
+This command will:
+- Export API secrets from `/api` path → `apps/api/.dev.vars`
+- Export Web secrets from `/web` path → `apps/web/.env.local`
+- Work on both Windows (PowerShell) and Unix (Bash)
+
+Then run your development commands normally:
+```bash
+pnpm dev
+```
+
+### 6. Alternative: Run Commands with Secrets Injected
+
+You can also run commands directly with Infisical (secrets injected at runtime):
 
 ```bash
 # Run development server with secrets injected
-infisical run --env=development -- pnpm dev
+pnpm dev:secrets
+
+# Run tests with secrets
+pnpm test:secrets
 
 # Run specific package
-infisical run --env=development -- pnpm --filter=api dev
-
-# Run tests
-infisical run --env=production -- pnpm test
+infisical run --env=development --path=/api -- pnpm --filter=api dev
 
 # Generate database migrations
-infisical run --env=development -- pnpm --filter=db db:generate
+infisical run --env=development --path=/api -- pnpm --filter=db db:generate
 ```
 
-### 6. Quick Setup Script
+### 7. Quick Setup Script
 
 Add these aliases to your shell profile for convenience:
 
@@ -99,24 +118,45 @@ pnpm-test test
 
 ## Managing Secrets
 
+### Secret Organization in Infisical
+
+Secrets are organized by application using folder paths:
+
+```
+Project Root
+├── /api (Backend API secrets)
+│   ├── DATABASE_URL
+│   ├── CLERK_SECRET_KEY
+│   ├── CLERK_WEBHOOK_SECRET
+│   ├── INTERNAL_ADMIN_API_KEY
+│   ├── INTERNAL_ADMIN_CLERK_USER_ID
+│   └── INTERNAL_ADMIN_CLERK_ORG_ID
+└── /web (Frontend Web secrets)
+    ├── PUBLIC_CLERK_PUBLISHABLE_KEY
+    ├── CLERK_SECRET_KEY
+    └── PUBLIC_SERVER_URL
+```
+
 ### Current Secrets Structure
 
-Our project uses the following secrets across environments:
-
-#### Required for All Environments:
-- `DATABASE_URL` - PostgreSQL connection string
-- `CLERK_PUBLISHABLE_KEY` - Clerk public key
-- `CLERK_SECRET_KEY` - Clerk secret key
+#### API Secrets (`/api` path):
+- `DATABASE_URL` - PostgreSQL connection string (Neon)
+- `CLERK_SECRET_KEY` - Clerk secret key for server-side auth
 - `CLERK_WEBHOOK_SECRET` - Clerk webhook validation secret
 - `INTERNAL_ADMIN_API_KEY` - Internal API authentication key
-- `INTERNAL_ADMIN_CLERK_USER_ID` - Admin user ID
-- `INTERNAL_ADMIN_CLERK_ORG_ID` - Admin organization ID
+- `INTERNAL_ADMIN_CLERK_USER_ID` - Admin user ID for internal operations
+- `INTERNAL_ADMIN_CLERK_ORG_ID` - Admin organization ID for internal operations
 
-#### Additional Secrets (add as needed):
-- `CLOUDFLARE_API_TOKEN` - For Cloudflare Workers deployment
-- `CLOUDFLARE_ACCOUNT_ID` - Cloudflare account identifier
+#### Web Secrets (`/web` path):
+- `PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk public key for client-side auth
+- `CLERK_SECRET_KEY` - Clerk secret key for server-side operations in SvelteKit
+- `PUBLIC_SERVER_URL` - Backend API URL (e.g., http://localhost:8080)
+
+#### Optional Secrets (add to `/api` as needed):
 - `APIFY_API_TOKEN` - Apify service token
 - `ANTHROPIC_API_KEY` - Claude API key
+- `CLOUDFLARE_API_TOKEN` - For Cloudflare Workers deployment (if deploying from CI)
+- `CLOUDFLARE_ACCOUNT_ID` - Cloudflare account identifier
 
 ### Environment Structure
 
@@ -129,23 +169,33 @@ Our project uses the following secrets across environments:
 1. Go to https://app.infisical.com
 2. Navigate to your project
 3. Select the environment (development/staging/production)
-4. Click "Add Secret"
-5. Enter the key name and value
-6. Save
+4. Navigate to the appropriate folder:
+   - For API secrets → `/api`
+   - For Web secrets → `/web`
+5. Click "Add Secret"
+6. Enter the key name and value
+7. Save
 
 **Important:** Add the same secret key to all environments, but with environment-specific values.
 
 ### Viewing Secrets Locally
 
 ```bash
-# View secrets for development environment
-infisical secrets
+# View API secrets for development environment
+pnpm infisical:secrets
+# or
+infisical secrets --env=development --path=/api
+
+# View Web secrets
+pnpm infisical:secrets:web
+# or
+infisical secrets --env=development --path=/web
 
 # View secrets for specific environment
-infisical secrets --env=production
+infisical secrets --env=production --path=/api
 
-# Export secrets to .env file (for debugging)
-infisical export --env=development > .env.local
+# Generate local .dev.vars and .env.local files
+pnpm generate:secrets
 ```
 
 ## CI/CD Integration
@@ -163,7 +213,7 @@ These are managed by your DevOps team. Contact them if you need to update these 
 
 ### How It Works
 
-The workflow file (`.github/workflows/ci.yml`) includes:
+The workflow file (`.github/workflows/ci.yml`) injects secrets from the `/api` folder path:
 
 ```yaml
 - name: Inject secrets from Infisical
@@ -173,9 +223,12 @@ The workflow file (`.github/workflows/ci.yml`) includes:
     client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
     env-slug: production
     project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
+    secret-path: /api  # Only API secrets needed for tests
 ```
 
-All secrets are then available as environment variables in subsequent steps.
+All secrets from the `/api` path are then available as environment variables in subsequent steps.
+
+**Note:** The deployment to Cloudflare Workers is handled directly within Cloudflare (not in GitHub Actions), so deployment secrets are not needed in the CI pipeline.
 
 ## Troubleshooting
 

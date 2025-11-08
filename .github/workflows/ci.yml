@@ -139,6 +139,7 @@ jobs:
           client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
           env-slug: production
           project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
+          secret-path: /api
 
       - name: Create .dev.vars for tests
         working-directory: apps/api
@@ -205,41 +206,3 @@ jobs:
             apps/*/dist
             apps/web/.svelte-kit
           retention-days: 7
-
-  deploy-api:
-    name: Deploy API
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10.17.1
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Inject secrets from Infisical
-        uses: Infisical/secrets-action@v1.0.7
-        with:
-          client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
-          client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
-          env-slug: production
-          project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
-
-      - name: Deploy to Cloudflare Workers
-        run: pnpm --filter=api deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
-          CLOUDFLARE_ACCOUNT_ID: ${CLOUDFLARE_ACCOUNT_ID}
