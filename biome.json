@@ -59,7 +59,12 @@
       "linter": {
         "rules": {
           "style": {
-            "useConst": "off"
+            "useConst": "off",
+            "noNonNullAssertion": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedImports": "off"
           }
         }
       }

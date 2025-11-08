@@ -18,7 +18,7 @@ const getToken = async () => {
 	}
 }
 
-export const client = hcWithType(env.PUBLIC_SERVER_URL!, {
+export const client = hcWithType(env.PUBLIC_SERVER_URL || 'http://localhost:8080', {
 	fetch: (async (input, init) => {
 		if (init?.headers) {
 			init.headers = new Headers(init.headers)
