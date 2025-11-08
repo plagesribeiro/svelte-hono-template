@@ -63,44 +63,48 @@ infisical init
 
 Select your project from the list.
 
-### 5. Generate Local Environment Files (Recommended)
+### 5. Export Secrets to Local Files (When Needed)
 
-The easiest way to work locally is to generate environment files from Infisical:
+There are two approaches to working with secrets locally:
+
+#### Option A: Export to Files (Traditional Approach)
+
+When you need actual `.dev.vars` or `.env.local` files:
 
 ```bash
-# Generate .dev.vars and .env.local from Infisical
-pnpm generate:secrets
+# Export API secrets to .dev.vars
+infisical export --env=development --path=/api --format=dotenv > apps/api/.dev.vars
+
+# Export Web secrets to .env.local
+infisical export --env=development --path=/web --format=dotenv > apps/web/.env.local
 ```
 
-This command will:
-- Export API secrets from `/api` path → `apps/api/.dev.vars`
-- Export Web secrets from `/web` path → `apps/web/.env.local`
-- Work on both Windows (PowerShell) and Unix (Bash)
-
-Then run your development commands normally:
+Then run normally:
 ```bash
 pnpm dev
 ```
 
-### 6. Alternative: Run Commands with Secrets Injected
+#### Option B: Run with Secrets Injected (Recommended)
 
-You can also run commands directly with Infisical (secrets injected at runtime):
+No files needed - secrets are injected at runtime:
 
 ```bash
-# Run development server with secrets injected
-pnpm dev:secrets
+# Run API dev server with secrets injected
+infisical run --env=development --path=/api -- pnpm --filter=api dev
+
+# Run Web dev server with secrets injected
+infisical run --env=development --path=/web -- pnpm --filter=web dev
 
 # Run tests with secrets
-pnpm test:secrets
-
-# Run specific package
-infisical run --env=development --path=/api -- pnpm --filter=api dev
+infisical run --env=production --path=/api -- pnpm test
 
 # Generate database migrations
 infisical run --env=development --path=/api -- pnpm --filter=db db:generate
 ```
 
-### 7. Quick Setup Script
+**Recommendation:** Use Option B for daily development (no files to manage). Use Option A only when you need persistent local files or when working offline.
+
+### 6. Quick Setup Script
 
 Add these aliases to your shell profile for convenience:
 

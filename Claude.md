@@ -217,32 +217,31 @@ npm install -g @infisical/cli
 
 2. **Login and Initialize**:
 ```bash
-pnpm infisical:login    # Authenticate with Infisical
-pnpm infisical:init     # Link to project
+infisical login
+infisical init
 ```
 
-3. **Generate Local Environment Files** (Recommended):
-```bash
-# Generate .dev.vars and .env.local from Infisical
-pnpm generate:secrets
-```
+3. **Choose Your Workflow**:
 
-This exports secrets from Infisical to local files:
-- API secrets from `/api` path → `apps/api/.dev.vars`
-- Web secrets from `/web` path → `apps/web/.env.local`
-
-Then run normally:
+**Option A: Export to Files** (for offline work or when you prefer files):
 ```bash
+# Export API secrets
+infisical export --env=development --path=/api --format=dotenv > apps/api/.dev.vars
+
+# Export Web secrets
+infisical export --env=development --path=/web --format=dotenv > apps/web/.env.local
+
+# Then run normally
 pnpm dev
 ```
 
-4. **Alternative: Run with Secrets Injected**:
+**Option B: Runtime Injection** (recommended - no files needed):
 ```bash
-# Run development server with secrets from Infisical
-pnpm dev:secrets
+# Run API with secrets injected
+infisical run --env=development --path=/api -- pnpm --filter=api dev
 
-# Or run any command with secrets
-pnpm infisical:run pnpm --filter=api dev
+# Run Web with secrets injected
+infisical run --env=development --path=/web -- pnpm --filter=web dev
 ```
 
 #### Secret Organization
@@ -809,15 +808,22 @@ pnpm --filter=db db:studio      # Open Drizzle Studio
 # Run Wrangler commands
 pnpm --filter=api cf-typegen    # Generate TypeScript types for bindings
 
-# Infisical (Secret Management)
-pnpm generate:secrets           # Generate .dev.vars and .env.local from Infisical (RECOMMENDED)
-pnpm infisical:login            # Login to Infisical
-pnpm infisical:init             # Initialize/link Infisical project
-pnpm infisical:secrets          # View API secrets (/api path)
-pnpm infisical:secrets:web      # View Web secrets (/web path)
-pnpm dev:secrets                # Run dev with secrets from Infisical (alternative to generate:secrets)
-pnpm test:secrets               # Run tests with secrets from Infisical
-pnpm infisical:run -- <command> # Run any command with Infisical secrets injected
+# Infisical (Secret Management) - Native Commands
+infisical login                 # Login to Infisical
+infisical init                  # Initialize/link project
+
+# Export secrets to files (when needed)
+infisical export --env=development --path=/api --format=dotenv > apps/api/.dev.vars
+infisical export --env=development --path=/web --format=dotenv > apps/web/.env.local
+
+# Run commands with secrets injected (recommended)
+infisical run --env=development --path=/api -- pnpm --filter=api dev
+infisical run --env=development --path=/web -- pnpm --filter=web dev
+infisical run --env=production --path=/api -- pnpm test
+
+# View secrets
+infisical secrets --env=development --path=/api
+infisical secrets --env=development --path=/web
 ```
 
 **Note:** Deployment to Cloudflare Workers is handled automatically within Cloudflare's deployment pipeline (not via `pnpm deploy`).
