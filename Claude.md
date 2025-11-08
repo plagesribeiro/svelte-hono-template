@@ -195,6 +195,59 @@ CLERK_SECRET_KEY=sk_test_...
 PUBLIC_SERVER_URL=http://localhost:8080
 ```
 
+### Secret Management with Infisical
+
+This project uses **Infisical** for centralized secret management across all environments. See [`INFISICAL.md`](./INFISICAL.md) for complete setup instructions.
+
+#### Quick Start with Infisical
+
+1. **Install Infisical CLI** (one-time setup):
+```bash
+# macOS/Linux
+curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | sudo -E bash
+sudo apt-get update && sudo apt-get install infisical
+
+# Windows (PowerShell with Scoop)
+scoop bucket add org https://github.com/Infisical/scoop-infisical.git
+scoop install infisical
+
+# Alternative (npm)
+npm install -g @infisical/cli
+```
+
+2. **Login and Initialize**:
+```bash
+pnpm infisical:login    # Authenticate with Infisical
+pnpm infisical:init     # Link to project
+```
+
+3. **Run with Secrets Injected**:
+```bash
+# Run development server with secrets from Infisical
+pnpm dev:secrets
+
+# Or run any command with secrets
+pnpm infisical:run pnpm --filter=api dev
+```
+
+#### Benefits of Using Infisical
+
+- **No `.dev.vars` files needed** - Secrets loaded dynamically
+- **Environment separation** - Different secrets for dev/staging/prod
+- **Team collaboration** - Share secrets securely without copy-paste
+- **Audit trail** - Track who accessed secrets
+- **Easy rotation** - Update secrets in one place
+
+#### Fallback: Traditional .dev.vars (if not using Infisical)
+
+If you prefer traditional environment files:
+
+1. Copy `apps/api/.dev.vars.example` to `apps/api/.dev.vars`
+2. Fill in your secret values
+3. Run commands normally: `pnpm dev`
+
+**Note**: `.dev.vars` and `.env` files are gitignored and should never be committed.
+
 ### Development Commands
 
 #### Start All Apps
@@ -736,6 +789,14 @@ pnpm --filter=api deploy        # Deploy to Cloudflare
 
 # Run Wrangler commands
 pnpm --filter=api cf-typegen    # Generate TypeScript types for bindings
+
+# Infisical (Secret Management)
+pnpm infisical:login            # Login to Infisical
+pnpm infisical:init             # Initialize/link Infisical project
+pnpm infisical:secrets          # View secrets for current environment
+pnpm dev:secrets                # Run dev with secrets from Infisical
+pnpm test:secrets               # Run tests with secrets from Infisical
+pnpm infisical:run -- <command> # Run any command with Infisical secrets injected
 ```
 
 ## Troubleshooting
@@ -764,6 +825,37 @@ DATABASE_URL=postgresql://user:pass@host/db
 1. Ensure database URL includes `?sslmode=require` for Neon
 2. Verify Neon database is accessible from your location
 3. Check that DATABASE_URL is set in Cloudflare Workers environment variables for production
+
+### Infisical CLI not found
+
+**Solution:**
+1. Install Infisical CLI (see installation instructions in [INFISICAL.md](./INFISICAL.md))
+2. Verify installation: `infisical --version`
+3. If using npm install, ensure npm global bin is in your PATH
+
+### Infisical authentication fails
+
+**Solution:**
+1. Run `pnpm infisical:login` to authenticate
+2. Ensure you have access to the project in Infisical
+3. Contact your team lead if you need to be added to the project
+
+### Environment variables not loading from Infisical
+
+**Solution:**
+1. Verify `.infisical.json` exists in project root
+2. Run `pnpm infisical:init` to reinitialize
+3. Check you're using the correct environment: `--env=development` or `--env=production`
+4. Verify secrets exist in Infisical web UI: https://app.infisical.com
+
+### GitHub Actions failing with "INFISICAL_CLIENT_ID not found"
+
+**Solution:**
+1. Ensure GitHub repository secrets are set:
+   - `INFISICAL_CLIENT_ID`
+   - `INFISICAL_CLIENT_SECRET`
+   - `INFISICAL_PROJECT_SLUG`
+2. Contact DevOps/Admin to configure these secrets
 
 ## Resources
 

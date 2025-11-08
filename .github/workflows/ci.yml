@@ -132,18 +132,31 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-test-
 
-      - name: Run tests with coverage
-        run: pnpm test:coverage --filter=api
+      - name: Inject secrets from Infisical
+        uses: Infisical/secrets-action@v1.0.7
+        with:
+          client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
+          client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+          env-slug: production
+          project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
+
+      - name: Create .dev.vars for tests
+        working-directory: apps/api
+        run: |
+          cat > .dev.vars << EOF
+          DATABASE_URL=${DATABASE_URL}
+          CLERK_PUBLISHABLE_KEY=${CLERK_PUBLISHABLE_KEY}
+          CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
+          CLERK_WEBHOOK_SECRET=${CLERK_WEBHOOK_SECRET}
+          INTERNAL_ADMIN_API_KEY=${INTERNAL_ADMIN_API_KEY}
+          INTERNAL_ADMIN_CLERK_USER_ID=${INTERNAL_ADMIN_CLERK_USER_ID}
+          INTERNAL_ADMIN_CLERK_ORG_ID=${INTERNAL_ADMIN_CLERK_ORG_ID}
+          EOF
+
+      - name: Run tests
+        run: pnpm --filter=api test
         env:
           NODE_ENV: test
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        if: always()
-        with:
-          files: ./apps/api/coverage/lcov.info
-          fail_ci_if_error: false
-          token: ${{ secrets.CODECOV_TOKEN }}
 
   build:
     name: Build
@@ -217,8 +230,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Inject secrets from Infisical
+        uses: Infisical/secrets-action@v1.0.7
+        with:
+          client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
+          client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+          env-slug: production
+          project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
+
       - name: Deploy to Cloudflare Workers
         run: pnpm --filter=api deploy
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
+          CLOUDFLARE_ACCOUNT_ID: ${CLOUDFLARE_ACCOUNT_ID}
