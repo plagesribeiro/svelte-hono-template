@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { SignIn } from "svelte-clerk";
+import { SignIn } from 'svelte-clerk'
 
-  let { data } = $props();
+let { data } = $props()
 </script>
 
 <div class="card">

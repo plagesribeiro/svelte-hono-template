@@ -4,7 +4,11 @@
   "scripts": {
     "dev": "pnpm run cf-typegen && wrangler dev",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "exports": {
     ".": "./src/types.ts"
@@ -14,14 +18,18 @@
     "@hono/clerk-auth": "^3.0.3",
     "@hono/swagger-ui": "^0.5.2",
     "@hono/zod-openapi": "^1.1.4",
+    "db": "workspace:*",
     "drizzle-orm": "catalog:",
     "hono": "^4.10.4",
     "shared": "workspace:*",
-    "db": "workspace:*",
-    "zod": "catalog:",
-    "svix": "^1.81.0"
+    "svix": "^1.81.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.10.5",
+    "@cloudflare/workers-types": "^4.20251107.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "vitest": "^3.2.4",
     "wrangler": "^4.4.0"
   }
 }

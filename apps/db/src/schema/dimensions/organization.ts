@@ -34,5 +34,5 @@ export const dimOrganizationTable = pgTable(
 		// Indexes for RLS flag lookups
 		index('dim_organization_is_master_idx').on(table.isMasterOrg),
 		index('dim_organization_is_template_idx').on(table.isTemplateOrg),
-	],
+	]
 )

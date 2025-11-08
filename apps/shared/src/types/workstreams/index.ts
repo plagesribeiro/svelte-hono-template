@@ -11,32 +11,32 @@ export type WorkstreamAgentType = (typeof WorkstreamAgentTypes)[number]
 
 // Base workstream agent interface
 export interface WorkstreamAgent {
-    id: string
-    workstreamId: string
-    type: WorkstreamAgentType
-    order: number
-    name: string
-    description?: string
-    createdBy: string
-    lastUpdatedBy: string
-    createdAt: string
-    updatedAt: string
-    config?: WorkstreamAgentConfig
-    version?: number
+	id: string
+	workstreamId: string
+	type: WorkstreamAgentType
+	order: number
+	name: string
+	description?: string
+	createdBy: string
+	lastUpdatedBy: string
+	createdAt: string
+	updatedAt: string
+	config?: WorkstreamAgentConfig
+	version?: number
 }
 
 export const WorkstreamAgentConfigSchema = z.discriminatedUnion('type', [
-    agents.WorkstreamImportAgentConfigSchema,
-    agents.WorkstreamExtractAgentConfigSchema,
-    agents.WorkstreamReviewAgentConfigSchema,
-    agents.WorkstreamExportAgentConfigSchema,
+	agents.WorkstreamImportAgentConfigSchema,
+	agents.WorkstreamExtractAgentConfigSchema,
+	agents.WorkstreamReviewAgentConfigSchema,
+	agents.WorkstreamExportAgentConfigSchema,
 ])
 
 export const WorkstreamAgentResultSchema = z.discriminatedUnion('type', [
-    agents.WorkstreamImportAgentResultSchema,
-    agents.WorkstreamExtractAgentResultSchema,
-    agents.WorkstreamReviewAgentResultSchema,
-    agents.WorkstreamExportAgentResultSchema,
+	agents.WorkstreamImportAgentResultSchema,
+	agents.WorkstreamExtractAgentResultSchema,
+	agents.WorkstreamReviewAgentResultSchema,
+	agents.WorkstreamExportAgentResultSchema,
 ])
 
 export type WorkstreamAgentConfig = z.infer<typeof WorkstreamAgentConfigSchema>

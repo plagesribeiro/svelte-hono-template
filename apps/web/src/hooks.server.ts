@@ -1,32 +1,33 @@
-import { isolateLocals } from "$lib/utils/locals";
-import type { Handle } from "@sveltejs/kit";
+import type { Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
-import { withClerkHandler } from 'svelte-clerk/server';
+import { withClerkHandler } from 'svelte-clerk/server'
+import { isolateLocals } from '$lib/utils/locals'
 
-export const handle = sequence(withClerkHandler(),
-(async ({ event, resolve }) => {
-    return await isolateLocals(event.locals, async () => await resolve(event))
-}) satisfies Handle,
-(async ({ event, resolve }) => {
-	let theme: string | null = null;
+export const handle = sequence(
+	withClerkHandler(),
+	(async ({ event, resolve }) => {
+		return await isolateLocals(event.locals, async () => await resolve(event))
+	}) satisfies Handle,
+	(async ({ event, resolve }) => {
+		let theme: string | null = null
 
-	const newTheme = event.url.searchParams.get("theme");
-	const cookieTheme = event.cookies.get("colortheme");
+		const newTheme = event.url.searchParams.get('theme')
+		const cookieTheme = event.cookies.get('colortheme')
 
-	if (newTheme) {
-		theme = newTheme;
-	} else if (cookieTheme) {
-		theme = cookieTheme;
-	} else {
-		theme = "forest";
-	}
+		if (newTheme) {
+			theme = newTheme
+		} else if (cookieTheme) {
+			theme = cookieTheme
+		} else {
+			theme = 'forest'
+		}
 
-	if (theme) {
-		return await resolve(event, {
-			transformPageChunk: ({ html }) =>
-				html.replace('data-theme=""', `data-theme="${theme}"`),
-		});
-	}
+		if (theme) {
+			return await resolve(event, {
+				transformPageChunk: ({ html }) => html.replace('data-theme=""', `data-theme="${theme}"`),
+			})
+		}
 
-	return await resolve(event);
-}) satisfies Handle);
+		return await resolve(event)
+	}) satisfies Handle
+)

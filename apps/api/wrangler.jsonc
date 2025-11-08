@@ -4,6 +4,6 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-10-31",
   "dev": {
-    "port": 8080,
-  },
+    "port": 8080
+  }
 }

@@ -1,34 +1,39 @@
 import { clerkMiddleware } from '@hono/clerk-auth'
-import { authMiddleware } from './middleware/auth.middleware'
-import { protectedRoutes as protectedRoutesIndex } from './routes/protected/protected.index'
-import { createOpenAPIApp } from './utils/openapi'
 import { cors } from 'hono/cors'
+import { authMiddleware } from './middleware/auth.middleware'
 import { clerkWebhookRouter } from './routes/clerkWebhook/clerkWebhook.index'
+import { protectedRoutes as protectedRoutesIndex } from './routes/protected/protected.index'
 import { Logger } from './utils/logger'
+import { createOpenAPIApp } from './utils/openapi'
 
 const app = createOpenAPIApp()
 app.use(cors())
 app.use(clerkMiddleware())
 
 app.onError((err, c) => {
-    Logger.error('[Error] Error:', err instanceof Error ? err : new Error(String(err)))
-    return c.json({ success: false, message: `Internal server error: ${err instanceof Error ? err.message : String(err)}` }, 500)
+	Logger.error('[Error] Error:', err instanceof Error ? err : new Error(String(err)))
+	return c.json(
+		{
+			success: false,
+			message: `Internal server error: ${err instanceof Error ? err.message : String(err)}`,
+		},
+		500
+	)
 })
 
 const publicRoutes = app
-    .get('/favicon.ico', (c) => c.body(null, 204))
-    .get('/robots.txt', (c) => c.text('User-agent: *\nDisallow:', 404))
-    .get('/apple-touch-icon.png', (c) => c.body(null, 204))
-    .get('/apple-touch-icon-precomposed.png', (c) => c.body(null, 204))
-    .get('/whoami', async (c) => {
-      const auth = c.var.clerkAuth()
-      const userId = auth?.userId
+	.get('/favicon.ico', (c) => c.body(null, 204))
+	.get('/robots.txt', (c) => c.text('User-agent: *\nDisallow:', 404))
+	.get('/apple-touch-icon.png', (c) => c.body(null, 204))
+	.get('/apple-touch-icon-precomposed.png', (c) => c.body(null, 204))
+	.get('/whoami', async (c) => {
+		const auth = c.var.clerkAuth()
+		const userId = auth?.userId
 
-      return c.json({ 
-        userRef: userId ? userId : "Unknown Unauthenticated User",
-       })
-    })
-
+		return c.json({
+			userRef: userId ? userId : 'Unknown Unauthenticated User',
+		})
+	})
 
 const webhookRoutes = publicRoutes.route('/clerkWebhook', clerkWebhookRouter)
 
@@ -37,7 +42,7 @@ app.use(authMiddleware())
 const protectedRoutes = webhookRoutes.route('/protected', protectedRoutesIndex)
 
 export default {
-  fetch: app.fetch
+	fetch: app.fetch,
 }
 
 export type ServerType = typeof protectedRoutes

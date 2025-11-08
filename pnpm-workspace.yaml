@@ -1,5 +1,6 @@
 packages:
   - apps/*
+  - packages/*
 catalog:
   "zod": 4.1.12
   "drizzle-orm": 0.44.7

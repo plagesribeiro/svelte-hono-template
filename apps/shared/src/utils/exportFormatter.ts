@@ -24,12 +24,12 @@ import type { CondensedField } from '../types/workstreams/agents/exportAgent'
  * ```
  */
 export function formatCondensedFieldsForExport(fields: CondensedField[]): string[][] {
-    if (fields.length === 0) {
-        return [[], []]
-    }
+	if (fields.length === 0) {
+		return [[], []]
+	}
 
-    const fieldNames = fields.map((field) => field.fieldName)
-    const finalValues = fields.map((field) => field.finalValue)
+	const fieldNames = fields.map((field) => field.fieldName)
+	const finalValues = fields.map((field) => field.finalValue)
 
-    return [fieldNames, finalValues]
+	return [fieldNames, finalValues]
 }

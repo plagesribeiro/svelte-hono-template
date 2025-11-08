@@ -19,5 +19,5 @@ export const dimUserTable = pgTable(
 		index('dim_user_clerk_id_idx').on(table.clerkUserId),
 		index('dim_user_email_idx').on(table.email),
 		index('dim_user_username_idx').on(table.username),
-	],
+	]
 )

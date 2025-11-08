@@ -3,8 +3,32 @@
   "ui": "tui",
   "tasks": {
     "build": {
+      "dependsOn": ["^build", "typecheck"],
+      "outputs": ["build/**", "dist/**", ".svelte-kit/**"],
+      "inputs": ["src/**", "*.ts", "*.js", "*.json", "*.svelte"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "cache": true,
+      "inputs": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "src/**/*.svelte",
+        "tsconfig.json",
+        "tsconfig.*.json"
+      ],
+      "outputs": []
+    },
+    "test": {
       "dependsOn": ["^build"],
-      "outputs": ["build/**", "dist/**"]
+      "cache": true,
+      "inputs": ["src/**/*.ts", "src/**/*.test.ts", "vitest.config.ts"],
+      "outputs": ["coverage/**"]
+    },
+    "test:coverage": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "outputs": ["coverage/**"]
     },
     "start": {
       "dependsOn": ["build"],
@@ -15,6 +39,7 @@
       "dependsOn": ["^check"]
     },
     "dev": {
+      "dependsOn": ["^build"],
       "persistent": true,
       "cache": false
     }

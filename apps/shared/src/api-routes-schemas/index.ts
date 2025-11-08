@@ -1,2 +1,2 @@
-export * from './protected'
 export * from './clerkWebhook'
+export * from './protected'

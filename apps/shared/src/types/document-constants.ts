@@ -2,9 +2,9 @@
  * Supported document MIME types
  */
 export const SUPPORTED_DOCUMENT_MIME_TYPES = [
-    'application/pdf',
-    'application/msword', // .doc
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+	'application/pdf',
+	'application/msword', // .doc
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
 ] as const
 
 /**

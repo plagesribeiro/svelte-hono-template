@@ -1,15 +1,15 @@
-import { redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit'
 
 export const load = async ({ locals, url }) => {
-	const clerkAuth = locals.auth();
-    const isSignOutRoute = url.pathname.includes('/sign-out');
-	const redirectUrl = decodeURIComponent(url.searchParams.get('redirect_url') ?? '/');
+	const clerkAuth = locals.auth()
+	const isSignOutRoute = url.pathname.includes('/sign-out')
+	const redirectUrl = decodeURIComponent(url.searchParams.get('redirect_url') ?? '/')
 
 	if (clerkAuth.userId && !isSignOutRoute) {
-		return redirect(301, redirectUrl);
+		return redirect(301, redirectUrl)
 	}
 
 	return {
-		redirectUrl
+		redirectUrl,
 	}
-};
+}

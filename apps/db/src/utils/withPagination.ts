@@ -9,5 +9,8 @@ import type { PgSelectQueryBuilder } from 'drizzle-orm/pg-core'
  * @returns Enhanced Drizzle ORM SELECT query builder with pagination limit/offset directives
  * @see https://orm.drizzle.team/docs/dynamic-query-building
  */
-export const withPagination = <T extends PgSelectQueryBuilder>(qb: T, page: number, pageSize: number) =>
-    qb.limit(pageSize).offset(Math.max((page - 1) * pageSize, 0))
+export const withPagination = <T extends PgSelectQueryBuilder>(
+	qb: T,
+	page: number,
+	pageSize: number
+) => qb.limit(pageSize).offset(Math.max((page - 1) * pageSize, 0))

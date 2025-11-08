@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { ClerkProvider } from "svelte-clerk";
-  import "../app.css";
-  import { shadcn } from "@clerk/themes";
+import { ClerkProvider } from 'svelte-clerk'
+import '../app.css'
+import { shadcn } from '@clerk/themes'
 
-  let { children } = $props();
+let { children } = $props()
 </script>
 
 <ClerkProvider appearance={{ theme: shadcn }}>

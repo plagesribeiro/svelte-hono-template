@@ -5,11 +5,19 @@ import { deleteOrganizationByClerkIdService } from './delete-organization-by-cle
 import { upsertOrganizationFromClerkService } from './upsert-organization-from-clerk'
 
 export class OrganizationService {
-    public readonly upsertOrganizationFromClerk: ReturnType<typeof upsertOrganizationFromClerkService>
-    public readonly deleteOrganizationByClerkId: ReturnType<typeof deleteOrganizationByClerkIdService>
+	public readonly upsertOrganizationFromClerk: ReturnType<typeof upsertOrganizationFromClerkService>
+	public readonly deleteOrganizationByClerkId: ReturnType<typeof deleteOrganizationByClerkIdService>
 
-    constructor(organizationsRepo: OrganizationsRepository, usersRepo: UsersRepository, clerk: ClerkClient) {
-        this.upsertOrganizationFromClerk = upsertOrganizationFromClerkService(organizationsRepo, usersRepo, clerk)
-        this.deleteOrganizationByClerkId = deleteOrganizationByClerkIdService(organizationsRepo)
-    }
+	constructor(
+		organizationsRepo: OrganizationsRepository,
+		usersRepo: UsersRepository,
+		clerk: ClerkClient
+	) {
+		this.upsertOrganizationFromClerk = upsertOrganizationFromClerkService(
+			organizationsRepo,
+			usersRepo,
+			clerk
+		)
+		this.deleteOrganizationByClerkId = deleteOrganizationByClerkIdService(organizationsRepo)
+	}
 }

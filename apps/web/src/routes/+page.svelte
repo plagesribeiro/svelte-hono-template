@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { client, json } from "$lib/api.svelte";
+import { client, json } from '$lib/api.svelte'
 
-  let { data } = $props();
+let { data } = $props()
 
-  let getWhoamiData = $state<string>("");
-  const getWhoami = async () => {
-    const whoami = await json(client.whoami.$get());
-    getWhoamiData = whoami.userRef;
-  };
+let getWhoamiData = $state<string>('')
+const getWhoami = async () => {
+	const whoami = await json(client.whoami.$get())
+	getWhoamiData = whoami.userRef
+}
 </script>
 
 <div class="flex w-full items-center p-6">

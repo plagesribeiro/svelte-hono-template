@@ -50,6 +50,13 @@ apps/
 - **Validation**: Zod (shared schemas)
 - **Purpose**: API route schemas, types, and utilities
 
+### Development Tools
+- **Linter/Formatter**: Biome 2.3.4 (with Svelte support)
+- **Testing**: Vitest 3.2.4 with Cloudflare Workers pool
+- **Git Hooks**: Husky 9.1.7
+- **Commit Linting**: Commitlint with conventional commits
+- **CI/CD**: GitHub Actions with Turborepo Remote Cache support
+
 ## Architecture & Patterns
 
 ### Workspace Dependencies
@@ -528,6 +535,158 @@ The `turbo.json` defines task dependencies:
 - `hooks.server.ts` injects theme into HTML `data-theme` attribute
 - Available themes: forest (default), plus all DaisyUI themes
 
+## Development Tooling & Quality Assurance
+
+### Linting & Formatting with Biome
+
+The project uses **Biome 2.3.4** for ultra-fast linting and formatting with experimental Svelte support.
+
+**Configuration**: `biome.json` at repository root
+
+**Features**:
+- Lints JavaScript, TypeScript, JSON, and Svelte files
+- Auto-formatting on save
+- Git integration (respects .gitignore)
+- Consistent code style across the monorepo
+
+**Commands**:
+```bash
+pnpm lint              # Check for issues
+pnpm lint:fix          # Fix issues automatically
+pnpm format            # Check formatting
+pnpm format:fix        # Format all files
+```
+
+**Pre-commit Hook**: Biome runs automatically on staged files before each commit.
+
+### Type Checking
+
+TypeScript checking is configured across all packages with **shared base configurations**.
+
+**Shared Config**: `packages/tsconfig/` contains base configurations:
+- `base.json` - Strict TypeScript settings for all packages
+- `cloudflare-workers.json` - Cloudflare Workers-specific settings
+- `sveltekit.json` - SvelteKit-specific settings
+
+**Package-specific configurations**:
+- `apps/api/tsconfig.json` - Extends cloudflare-workers.json
+- `apps/web/tsconfig.json` - Uses SvelteKit generated config with strict settings
+- `apps/db/tsconfig.json` - Extends base.json
+- `apps/shared/tsconfig.json` - Extends base.json
+
+**Commands**:
+```bash
+pnpm typecheck         # Check types across all packages (uses Turborepo)
+```
+
+**Turborepo Integration**: Type checking is cached and runs in parallel across packages for performance.
+
+### Testing with Vitest
+
+The API uses **Vitest 3.2.4** with **@cloudflare/vitest-pool-workers** for testing in a Cloudflare Workers environment.
+
+**Configuration**: `apps/api/vitest.config.ts`
+
+**Test Structure**:
+- Unit tests for services: `apps/api/src/services/**/*.test.ts`
+- Service logic is tested with mocked repositories
+- Coverage reporting with v8 provider
+
+**Commands**:
+```bash
+# From root
+pnpm test                           # Run all tests
+
+# From api package
+pnpm --filter=api test              # Run tests once
+pnpm --filter=api test:watch        # Run tests in watch mode
+pnpm --filter=api test:coverage     # Run tests with coverage report
+```
+
+**Example Test**: See `apps/api/src/services/organizations/upsert-organization-from-clerk.test.ts` for a comprehensive service test example.
+
+**Best Practices**:
+- Test service logic, not framework code
+- Mock external dependencies (database, APIs)
+- Use descriptive test names
+- Group related tests with `describe` blocks
+- Test both success and error paths
+
+### Git Hooks with Husky
+
+**Pre-commit Hook** (`.husky/pre-commit`):
+- Runs Biome check on staged files with auto-fix
+- Runs type checking across all packages
+- Fast (typically 5-30 seconds)
+
+**Commit Message Hook** (`.husky/commit-msg`):
+- Enforces conventional commit format
+- Uses commitlint with @commitlint/config-conventional
+
+**Conventional Commit Format**:
+```
+type(scope): subject
+
+feat: add user authentication
+fix: resolve database connection issue
+docs: update API documentation
+style: format code with biome
+refactor: simplify user service logic
+perf: optimize database queries
+test: add tests for organization service
+build: update dependencies
+ci: fix GitHub Actions workflow
+chore: update gitignore
+```
+
+**Allowed Types**: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
+
+### CI/CD with GitHub Actions
+
+**Workflow**: `.github/workflows/ci.yml`
+
+**Pipeline Stages**:
+
+1. **Install** - Install dependencies with pnpm (cached)
+2. **Lint** - Run Biome checks (parallel with typecheck and test)
+3. **Type Check** - Run TypeScript checks across all packages (parallel)
+4. **Test** - Run Vitest tests with coverage (parallel)
+5. **Build** - Build all packages (after all checks pass)
+6. **Deploy** - Deploy API to Cloudflare Workers (only on main branch)
+
+**Key Features**:
+- Parallel job execution for speed
+- Turborepo caching for incremental builds
+- Coverage upload to Codecov
+- Concurrency groups (cancels outdated runs)
+- Build artifact upload
+
+**Caching Strategies**:
+- pnpm store caching (automatic with setup-node)
+- Turborepo cache (local .turbo directory)
+- Optional: Turborepo Remote Cache (requires TURBO_TOKEN and TURBO_TEAM)
+
+**Required Secrets** (for deployment):
+- `CLOUDFLARE_API_TOKEN` - Cloudflare API token for deployment
+- `CLOUDFLARE_ACCOUNT_ID` - Cloudflare account ID
+- `CODECOV_TOKEN` - Codecov token for coverage reporting (optional)
+
+**Optional Variables** (for remote caching):
+- `TURBO_TOKEN` - Vercel token for Turborepo Remote Cache
+- `TURBO_TEAM` - Vercel team slug
+
+**Setting up Turborepo Remote Cache**:
+1. Sign up for free Vercel account
+2. Run `pnpm dlx turbo login` and authenticate
+3. Run `pnpm dlx turbo link` to link repository
+4. Add `TURBO_TOKEN` and `TURBO_TEAM` to GitHub repository secrets/variables
+5. Remote caching will dramatically speed up CI builds
+
+**Manual Pre-commit Check**:
+```bash
+pnpm precommit         # Run lint + typecheck manually
+```
+
 ## Common Commands Reference
 
 ```bash
@@ -535,7 +694,7 @@ The `turbo.json` defines task dependencies:
 pnpm install
 
 # Development (all apps)
-pnpm dev
+pnpm dev                        # Starts all apps (builds dependencies first)
 turbo dev
 
 # Development (specific app)
@@ -543,11 +702,29 @@ turbo dev --filter=web
 turbo dev --filter=api
 
 # Build (all)
-pnpm build
+pnpm build                      # Builds all packages (runs typecheck first)
 turbo build
 
 # Build (specific)
 turbo build --filter=api
+
+# Linting & Formatting
+pnpm lint                       # Check for linting issues
+pnpm lint:fix                   # Fix linting issues automatically
+pnpm format                     # Check formatting
+pnpm format:fix                 # Format all files
+
+# Type Checking
+pnpm typecheck                  # Check TypeScript types across all packages
+
+# Testing
+pnpm test                       # Run all tests
+pnpm --filter=api test          # Run API tests
+pnpm --filter=api test:watch    # Run API tests in watch mode
+pnpm --filter=api test:coverage # Run tests with coverage
+
+# Pre-commit Check (manual)
+pnpm precommit                  # Run lint + typecheck manually
 
 # Database operations
 pnpm --filter=db db:generate    # Generate migrations

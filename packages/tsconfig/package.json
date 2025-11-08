@@ -1,0 +1,11 @@
+{
+  "name": "tsconfig",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared TypeScript configuration for the monorepo",
+  "files": [
+    "base.json",
+    "sveltekit.json",
+    "cloudflare-workers.json"
+  ]
+}

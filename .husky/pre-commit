@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run Biome check on staged files
+pnpm biome check --staged --write --no-errors-on-unmatched
+
+# Run type checking (fast because of Turborepo caching)
+pnpm typecheck

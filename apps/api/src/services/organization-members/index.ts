@@ -5,15 +5,15 @@ import { deleteMemberService } from './delete-member'
 import { upsertMemberService } from './upsert-member'
 
 export class OrganizationMemberService {
-    public readonly upsertMember: ReturnType<typeof upsertMemberService>
-    public readonly deleteMember: ReturnType<typeof deleteMemberService>
+	public readonly upsertMember: ReturnType<typeof upsertMemberService>
+	public readonly deleteMember: ReturnType<typeof deleteMemberService>
 
-    constructor(
-        organizationMembersRepo: OrganizationMembersRepository,
-        organizationsRepo: OrganizationsRepository,
-        usersRepo: UsersRepository,
-    ) {
-        this.upsertMember = upsertMemberService(organizationMembersRepo, organizationsRepo, usersRepo)
-        this.deleteMember = deleteMemberService(organizationMembersRepo, organizationsRepo, usersRepo)
-    }
+	constructor(
+		organizationMembersRepo: OrganizationMembersRepository,
+		organizationsRepo: OrganizationsRepository,
+		usersRepo: UsersRepository
+	) {
+		this.upsertMember = upsertMemberService(organizationMembersRepo, organizationsRepo, usersRepo)
+		this.deleteMember = deleteMemberService(organizationMembersRepo, organizationsRepo, usersRepo)
+	}
 }

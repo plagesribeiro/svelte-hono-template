@@ -1,9 +1,8 @@
-import { buildClerkProps } from 'svelte-clerk/server';
-import type { LayoutServerLoad } from './$types';
-import { client, json } from '$lib/api.svelte';
+import { buildClerkProps } from 'svelte-clerk/server'
+import type { LayoutServerLoad } from './$types'
 
 export const load: LayoutServerLoad = ({ locals }) => {
 	return {
-		...buildClerkProps(locals.auth())
-	};
-};
+		...buildClerkProps(locals.auth()),
+	}
+}

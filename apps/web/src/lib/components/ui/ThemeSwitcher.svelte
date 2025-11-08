@@ -1,36 +1,34 @@
 <script lang="ts">
-  import { browser } from "$app/environment";
-  import { enhance } from "$app/forms";
-  import { page } from "$app/state";
-  import type { SubmitFunction } from "@sveltejs/kit";
+import type { SubmitFunction } from '@sveltejs/kit'
+import { browser } from '$app/environment'
+import { enhance } from '$app/forms'
+import { page } from '$app/state'
 
-  const themes = [
-    "light",
-    "dark",
-    "cupcake",
-    "bumblebee",
-    "emerald",
-    "corporate",
-    "synthwave",
-    "forest",
-  ];
+const themes = [
+	'light',
+	'dark',
+	'cupcake',
+	'bumblebee',
+	'emerald',
+	'corporate',
+	'synthwave',
+	'forest',
+]
 
-  let currentTheme = $derived<string>(
-    browser && document
-      ? document.documentElement.getAttribute("data-theme") || "Theme"
-      : "Theme"
-  );
+let currentTheme = $derived<string>(
+	browser && document ? document.documentElement.getAttribute('data-theme') || 'Theme' : 'Theme'
+)
 
-  const submitUpdateTheme: SubmitFunction = ({ action }) => {
-    const theme = action.searchParams.get("theme");
+const submitUpdateTheme: SubmitFunction = ({ action }) => {
+	const theme = action.searchParams.get('theme')
 
-    if (theme) {
-      currentTheme = theme;
-      document.documentElement.setAttribute("data-theme", theme);
-    } else {
-      currentTheme = "Theme";
-    }
-  };
+	if (theme) {
+		currentTheme = theme
+		document.documentElement.setAttribute('data-theme', theme)
+	} else {
+		currentTheme = 'Theme'
+	}
+}
 </script>
 
 <div class="dropdown mb-72">

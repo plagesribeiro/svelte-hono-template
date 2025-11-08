@@ -25,6 +25,6 @@ export const dimOrganizationMemberTable = pgTable(
 		// Composite index for unique member per org
 		index('dim_organization_member_org_user_idx').on(table.dimOrganizationId, table.dimUserId),
 		// Index for reverse lookups (user's organizations)
-		index('dim_organization_member_user_idx').on(table.dimUserId)
-	],
+		index('dim_organization_member_user_idx').on(table.dimUserId),
+	]
 )
