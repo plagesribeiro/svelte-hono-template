@@ -137,7 +137,7 @@ jobs:
         with:
           client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
           client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
-          env-slug: production
+          env-slug: dev
           project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
           secret-path: /api
 
