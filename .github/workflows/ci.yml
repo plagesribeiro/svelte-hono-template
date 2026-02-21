@@ -279,9 +279,6 @@ jobs:
 
       - name: Rebuild Web with staging env vars
         run: pnpm --filter=web build
-        env:
-          PUBLIC_SERVER_URL: ${{ env.PUBLIC_SERVER_URL }}
-          PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ env.PUBLIC_CLERK_PUBLISHABLE_KEY }}
 
       - name: Deploy Web to Pages (staging)
         working-directory: apps/web
