@@ -1,9 +1,20 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "my-app",
+  "name": "uaibook-api",
   "main": "src/index.ts",
   "compatibility_date": "2025-10-31",
+  "compatibility_flags": ["nodejs_compat"],
   "dev": {
     "port": 8080
+  },
+  "env": {
+    "staging": {
+      "name": "uaibook-api-staging",
+      "routes": [{ "pattern": "api-staging.uaibook.com", "custom_domain": true }]
+    },
+    "production": {
+      "name": "uaibook-api-production",
+      "routes": [{ "pattern": "api.uaibook.com", "custom_domain": true }]
+    }
   }
 }

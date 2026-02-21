@@ -1,5 +1,5 @@
 import { type DbClient, dimOrganizationTable } from 'db'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 
 export type Organization = typeof dimOrganizationTable.$inferSelect
 
@@ -58,6 +58,46 @@ export class OrganizationsRepository {
 		}
 
 		return organization
+	}
+
+	async updateById(
+		id: string,
+		input: Partial<{
+			slug: string | null
+			businessType: 'barbershop' | 'court' | null
+			businessHours: unknown
+			timezone: string | null
+			phone: string | null
+			address: string | null
+			logoUrl: string | null
+			chatWelcomeMessage: string | null
+			chatInstructions: string | null
+			onboardingCompleted: boolean
+			name: string
+			description: string | null
+		}>
+	): Promise<Organization> {
+		const [org] = await this.db
+			.update(dimOrganizationTable)
+			.set({ ...input, updatedAt: new Date() })
+			.where(eq(dimOrganizationTable.id, id))
+			.returning()
+
+		if (!org) {
+			throw new Error('Failed to update organization')
+		}
+
+		return org
+	}
+
+	async getBySlug(slug: string): Promise<Organization | null> {
+		const [org] = await this.db
+			.select()
+			.from(dimOrganizationTable)
+			.where(and(eq(dimOrganizationTable.slug, slug), isNull(dimOrganizationTable.deletedAt)))
+			.limit(1)
+
+		return org ?? null
 	}
 
 	async deleteOrganizationByClerkId(clerkOrganizationId: string): Promise<void> {

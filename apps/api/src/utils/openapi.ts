@@ -6,15 +6,23 @@ export function createOpenAPIApp() {
 	app.doc('/openapi.json', {
 		openapi: '3.0.0',
 		info: {
-			title: 'My Template API',
+			title: 'UaiBook API',
 			version: '1.0.0',
-			description: 'API for My Template',
+			description: 'API for UaiBook - Multi-tenant scheduling platform',
 		},
 		security: [{ Bearer: [] }],
 		servers: [
 			{
 				url: 'http://localhost:8080',
 				description: 'Local development',
+			},
+			{
+				url: 'https://api-staging.uaibook.com',
+				description: 'Staging',
+			},
+			{
+				url: 'https://api.uaibook.com',
+				description: 'Production',
 			},
 		],
 		tags: [
@@ -25,6 +33,38 @@ export function createOpenAPIApp() {
 			{
 				name: 'Protected',
 				description: 'Protected endpoints',
+			},
+			{
+				name: 'Admin - Organization',
+				description: 'Organization management endpoints',
+			},
+			{
+				name: 'Admin - Professionals',
+				description: 'Professional management endpoints',
+			},
+			{
+				name: 'Admin - Services',
+				description: 'Service management endpoints',
+			},
+			{
+				name: 'Admin - Courts',
+				description: 'Court management endpoints',
+			},
+			{
+				name: 'Admin - Clients',
+				description: 'Client management endpoints',
+			},
+			{
+				name: 'Admin - Bookings',
+				description: 'Booking management endpoints',
+			},
+			{
+				name: 'Admin - Availability',
+				description: 'Availability management endpoints',
+			},
+			{
+				name: 'Public - Chat',
+				description: 'Public chat endpoints',
 			},
 		],
 	})

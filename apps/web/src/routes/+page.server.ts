@@ -1,13 +1,12 @@
 import { redirect } from '@sveltejs/kit'
-import { client, json } from '$lib/api.svelte'
 import type { Actions, PageServerLoad } from './$types'
 
-export const load: PageServerLoad = async () => {
-	const whoami = await json(client.whoami.$get())
-
-	return {
-		whoami,
+export const load: PageServerLoad = async ({ locals }) => {
+	const clerkAuth = locals.auth()
+	if (clerkAuth.userId) {
+		return redirect(302, '/dashboard')
 	}
+	return {}
 }
 
 export const actions: Actions = {

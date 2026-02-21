@@ -4,6 +4,8 @@
   "scripts": {
     "dev": "pnpm run cf-typegen && wrangler dev",
     "deploy": "wrangler deploy --minify",
+    "deploy:staging": "wrangler deploy --env staging --minify",
+    "deploy:production": "wrangler deploy --env production --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "typecheck": "pnpm run cf-typegen && tsc --noEmit",
     "test": "vitest run",
