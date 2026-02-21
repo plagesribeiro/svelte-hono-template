@@ -16,9 +16,9 @@
     "test": "turbo run test",
     "precommit": "pnpm lint && pnpm typecheck",
     "prepare": "husky",
-    "secrets:api": "infisical export --env=dev --path=/api --format=dotenv > apps/api/.dev.vars",
+    "secrets:api": "infisical export --env=dev --path=/api --format=dotenv > apps/api/.dev.vars && pnpm --filter=api cf-typegen",
     "secrets:web": "infisical export --env=dev --path=/web --format=dotenv > apps/web/.env.local",
-    "secrets": "pnpm secrets:api && pnpm secrets:web",
+    "secrets": "pnpm secrets:api && pnpm secrets:web && pnpm secrets:examples",
     "secrets:examples": "node scripts/generate-examples.js"
   },
   "devDependencies": {
